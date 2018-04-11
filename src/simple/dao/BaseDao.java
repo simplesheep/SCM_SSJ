@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import simple.tool.DataBaseConfigTool3;
 
 public class BaseDao {
-	
+	//ĞÂÔö×¢ÊÍ
 	private static String url;
 
 	private static String driver;
