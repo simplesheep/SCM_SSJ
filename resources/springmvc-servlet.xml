@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<context:component-scan base-package="simple.controller"></context:component-scan>
+
+	<!-- 全局异常 -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+
+				<prop key="java.lang.RuntimeException">error</prop>
+
+			</props>
+
+		</property>
+
+	</bean>
+	<mvc:annotation-driven>
+
+
+		<mvc:message-converters>
+
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+
+					<list>
+						<value>application/json;charset=UTF-8</value>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+
+				</property>
+				<property name="features">
+
+					<list>
+						<value>WriteDateUseDateFormat</value>
+
+					</list>
+
+				</property>
+
+			</bean>
+
+
+		</mvc:message-converters>
+
+
+	</mvc:annotation-driven>
+	<mvc:resources location="/statics/" mapping="/statics/**"></mvc:resources>
+	
+	<!-- 多视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+
+		<!-- 通过传递format值 默认为true -->
+
+
+		<property name="mediaTypes">
+
+			<map>
+				<entry key="xml" value="application/xml;charset=UTF-8"></entry>
+				<entry key="json" value="application/json;charset=UTF-8"></entry>
+				<entry key="html" value="text/html;charset=UTF-8"></entry>
+			</map>
+
+
+		</property>
+		<!-- 配置具体的试图解析器 -->
+		<property name="viewResolvers">
+
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/jsp/"></property>
+					<property name="suffix" value=".jsp"></property>
+
+				</bean>
+
+			</list>
+
+		</property>
+
+		<!--配置支持xml的视图   需要加一些额外的jar包 xstream-1.3.1.jar  spring-oxm-3.2.5.RELEASE.jar-->
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<constructor-arg>
+
+						<bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+							<!-- 指定哪些包下的Java对象可以被jaxb转化成xml文件 要想Java类能被转化成xml 需要在类的定义上加上Jaxb的注解 
+								@XmlRootElement -->
+							<property name="packagesToScan">
+								<value>simple.entity</value>
+
+							</property>
+
+						</bean>
+					</constructor-arg>
+
+
+				</bean>
+
+
+			</list>
+
+
+		</property>
+	</bean>
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	  <property name="defaultEncoding" value="UTF-8"></property>
+		<property name="maxUploadSize" value="5000000"></property>
+	
+	</bean>
+</beans>
